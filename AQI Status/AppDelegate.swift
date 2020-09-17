@@ -2,9 +2,6 @@
 //  AppDelegate.swift
 //  AQI Status
 //
-//  Created by John Abendroth on 9/15/20.
-//  Copyright © 2020 John Abendroth. All rights reserved.
-//
 
 import Cocoa
 
@@ -13,8 +10,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // create system wide instance of a status bar item
      let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     
-    // creeate an initialized popover variable to be toggled
+    // create an initialized popover variable to be toggled
     let popover = NSPopover()
+    
+    // create object for event monitor
+    var eventMonitor: EventMonitor?
+    
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // set up the button to be displayed in the status bar
@@ -28,8 +29,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         // create new instance of a view controller for the popover
         self.popover.contentViewController = ViewController.newViewController()
-        self.popover.animates = false
+        self.popover.animates = true
         
+        self.eventMonitor = EventMonitor(mask: [.leftMouseDown, .rightMouseDown]) { [weak self] event in
+            if let strongSelf = self, strongSelf.popover.isShown {
+                strongSelf.closePopover(sender: event)
+            }
+        }
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -50,11 +56,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if let button = self.statusItem.button {
             self.popover.show(relativeTo: button.bounds, of: button, preferredEdge: NSRectEdge.minY)
         }
+        self.eventMonitor?.start()
     }
 
     func closePopover(sender: Any?)  {
         self.popover.performClose(sender)
+        self.eventMonitor?.stop()
     }
 
 }
-

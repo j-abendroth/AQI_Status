@@ -8,12 +8,15 @@
 
 import Cocoa
 
-class ViewController: NSViewController {
-
+class ViewController: NSViewController, NSTextFieldDelegate {
+    
+    @IBOutlet weak var zipCodeTextField: NSTextFieldCell!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
+        // set default zip code entry to Santa Cruz
+        zipCodeTextField.stringValue = "95060"
     }
 
     override var representedObject: Any? {

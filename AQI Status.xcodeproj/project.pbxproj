@@ -11,6 +11,7 @@
 		1E2F31552510CB39003CCC28 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2F31542510CB39003CCC28 /* ViewController.swift */; };
 		1E2F31572510CB3A003CCC28 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1E2F31562510CB3A003CCC28 /* Assets.xcassets */; };
 		1E2F315A2510CB3A003CCC28 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1E2F31582510CB3A003CCC28 /* Main.storyboard */; };
+		1E2F316525119970003CCC28 /* EventMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2F316425119970003CCC28 /* EventMonitor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,6 +22,7 @@
 		1E2F31592510CB3A003CCC28 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		1E2F315B2510CB3A003CCC28 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1E2F315C2510CB3A003CCC28 /* AQI_Status.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AQI_Status.entitlements; sourceTree = "<group>"; };
+		1E2F316425119970003CCC28 /* EventMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMonitor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +56,7 @@
 			isa = PBXGroup;
 			children = (
 				1E2F31522510CB39003CCC28 /* AppDelegate.swift */,
+				1E2F316425119970003CCC28 /* EventMonitor.swift */,
 				1E2F31542510CB39003CCC28 /* ViewController.swift */,
 				1E2F31562510CB3A003CCC28 /* Assets.xcassets */,
 				1E2F31582510CB3A003CCC28 /* Main.storyboard */,
@@ -133,6 +136,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1E2F316525119970003CCC28 /* EventMonitor.swift in Sources */,
 				1E2F31552510CB39003CCC28 /* ViewController.swift in Sources */,
 				1E2F31532510CB39003CCC28 /* AppDelegate.swift in Sources */,
 			);
