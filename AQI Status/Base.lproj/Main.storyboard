@@ -691,7 +691,7 @@
                             <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kVy-s0-lAQ">
                                 <rect key="frame" x="265" y="229" width="56" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="acC-YQ-tNv">
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="acC-YQ-tNv">
                                     <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" formatWidth="-1" groupingSize="0" minimumIntegerDigits="1" maximumIntegerDigits="42" id="8WJ-ks-epy">
                                         <real key="minimum" value="10000"/>
                                         <real key="maximum" value="99999"/>
@@ -713,7 +713,7 @@
                         </subviews>
                     </view>
                     <connections>
-                        <outlet property="zipCodeTextField" destination="acC-YQ-tNv" id="BZS-3Z-xep"/>
+                        <outlet property="zipCodeTextField" destination="kVy-s0-lAQ" id="m06-eb-XWq"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

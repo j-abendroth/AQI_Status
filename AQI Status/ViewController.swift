@@ -10,13 +10,20 @@ import Cocoa
 
 class ViewController: NSViewController, NSTextFieldDelegate {
     
-    @IBOutlet weak var zipCodeTextField: NSTextFieldCell!
+    @IBOutlet weak var zipCodeTextField: NSTextField!
+    func controlTextDidEndEditing(_ obj: Notification) {
+        // once the zip code is entered, update the stored zip code value
+        AQIData.shared.zipCode = zipCodeTextField.stringValue
+        print("Changed text = \(zipCodeTextField.stringValue)\n")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        zipCodeTextField.delegate = self
 
         // set default zip code entry to Santa Cruz
         zipCodeTextField.stringValue = "95060"
+        AQIData.shared.fetchCoordinates()
     }
 
     override var representedObject: Any? {
