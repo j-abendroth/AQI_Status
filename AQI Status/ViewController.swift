@@ -22,7 +22,12 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         zipCodeTextField.delegate = self
 
         // set default zip code entry to Santa Cruz
-        zipCodeTextField.stringValue = "95060"
+        zipCodeTextField.stringValue = "95062"
+        
+        // start the timer to update the AQI every 30 minutes
+        
+        
+        
         AQIData.shared.fetchCoordinates()
     }
 
