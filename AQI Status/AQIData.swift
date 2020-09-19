@@ -14,7 +14,7 @@ public class AQIData {
     public var zipCoordinate: CLLocationCoordinate2D?
     public var filterDistance: Double
     public var filterRegion: MKCoordinateRegion?
-    public var PMArr: [(Float, CLLocationCoordinate2D)]
+    public var PMArr: [(pmValue: Float, coordinate: CLLocationCoordinate2D)]
     public var AQI: Float?
     
     private var nwLat: Double?
@@ -149,9 +149,9 @@ public class AQIData {
             var pmSum: Float = 0
             var count: Float = 0
             for tuple in self.PMArr {
-                if isCoordinate(coordinate: tuple.1, region: region) {
-                    print (tuple.0)
-                    pmSum += tuple.0
+                if isCoordinate(coordinate: tuple.coordinate, region: region) {
+                    print (tuple.pmValue)
+                    pmSum += tuple.pmValue
                     count += 1
                 }
             }
