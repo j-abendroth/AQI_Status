@@ -24,7 +24,7 @@ public class AQIData {
     
     public init(zip: String) {
         self.zipCode = zip
-        self.filterDistance = 1.5
+        self.filterDistance = 6.0
         self.PMArr = []
     }
     
@@ -50,9 +50,8 @@ public class AQIData {
                 // if location was set successfully, set our class coordinate equal to its coordinate
                 if let location = location {
                     self.zipCoordinate = location.coordinate
-                    self.test()
-                    //self.genBoundryBox()
-                    //self.fetchJson()
+                    self.genBoundryBox()
+                    self.fetchJson()
                 } else {
                     // if we get here, set coordinate to nil to indicate error
                     self.zipCoordinate = nil
@@ -148,26 +147,19 @@ public class AQIData {
             let region = MKCoordinateRegion(center: center, latitudinalMeters: meters, longitudinalMeters: meters)
             
             var pmSum: Float = 0
+            var count: Float = 0
             for tuple in self.PMArr {
                 if isCoordinate(coordinate: tuple.1, region: region) {
                     print (tuple.0)
                     pmSum += tuple.0
+                    count += 1
                 }
             }
-            // average the sum of the PM 2.5 measurements
-            pmSum = pmSum / Float(self.PMArr.count)
-            setAQI(pmValue: pmSum)
-        }
-    }
-    
-    public func test() {
-        print("Here1")
-        if let center = self.zipCoordinate {
-            let region = MKCoordinateRegion(center: center, latitudinalMeters: 1600, longitudinalMeters: 1600)
-            print("Here2")
-            if isCoordinate(coordinate: center, region: region) {
-                print("Here3")
+            // average the sum of the PM 2.5 measurements by the number of tuples we found were in the filter distance
+            if count > 0 {
+                pmSum = pmSum / count
             }
+            setAQI(pmValue: pmSum)
         }
     }
     
@@ -180,12 +172,12 @@ public class AQIData {
         var seLat: Double
         var seLng: Double
         
-        nwLat = center.latitude + (0.5 * (region.span.latitudeDelta))
+        nwLat = center.latitude - (0.5 * (region.span.latitudeDelta))
         nwLng = center.longitude - (0.5 * (region.span.longitudeDelta))
-        seLat = center.latitude - (0.5 * (region.span.latitudeDelta))
+        seLat = center.latitude + (0.5 * (region.span.latitudeDelta))
         seLng = center.longitude + (0.5 * (region.span.longitudeDelta))
         
-        return (coordinate.latitude <= nwLat && coordinate.latitude >= seLat && coordinate.longitude <= nwLng && coordinate.longitude >= seLng)
+        return (coordinate.latitude >= nwLat && coordinate.latitude <= seLat && coordinate.longitude >= nwLng && coordinate.longitude <= seLng)
     }
     
     // take a raw PM2.5 value and set class AQI value with a calculated AQI
