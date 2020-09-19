@@ -9,19 +9,23 @@ import Cocoa
 import CoreLocation
 import MapKit
 
-
 public class AQIData {
     public var zipCode: String
     public var zipCoordinate: CLLocationCoordinate2D?
-    public var nwLat: Double?
-    public var nwLng: Double?
-    public var seLat: Double?
-    public var seLng: Double?
-    
+    public var filterDistance: Double
+    public var filterRegion: MKCoordinateRegion?
+    public var PMArr: [(Float, CLLocationCoordinate2D)]
     public var AQI: Float?
+    
+    private var nwLat: Double?
+    private var nwLng: Double?
+    private var seLat: Double?
+    private var seLng: Double?
     
     public init(zip: String) {
         self.zipCode = zip
+        self.filterDistance = 1.5
+        self.PMArr = []
     }
     
     // public function used to update the current coordinates stored in the class
@@ -46,8 +50,9 @@ public class AQIData {
                 // if location was set successfully, set our class coordinate equal to its coordinate
                 if let location = location {
                     self.zipCoordinate = location.coordinate
-                    self.genBoundryBox()
-                    self.fetchJson()
+                    self.test()
+                    //self.genBoundryBox()
+                    //self.fetchJson()
                 } else {
                     // if we get here, set coordinate to nil to indicate error
                     self.zipCoordinate = nil
@@ -60,25 +65,20 @@ public class AQIData {
     // inaccurate way to calculate the bounding box, but simple
     // decided to settle for a decent approximation rather than work out a ton of math
     public func genBoundryBox() {
-        // default span is 1.5 miles for testing
-        // 1.5 mi = ~2400 m
+        // going to cache all sensors within the max 10 mi filter distance
+        // 10 mi = ~16,100 m
         if let center = self.zipCoordinate {
-            let region = MKCoordinateRegion(center: center, latitudinalMeters: 2400, longitudinalMeters: 2400)
+            let region = MKCoordinateRegion(center: center, latitudinalMeters: 16100, longitudinalMeters: 16100)
             self.nwLat = center.latitude + (0.5 * (region.span.latitudeDelta))
             self.nwLng = center.longitude - (0.5 * (region.span.longitudeDelta))
             self.seLat = center.latitude - (0.5 * (region.span.latitudeDelta))
             self.seLng = center.longitude + (0.5 * (region.span.longitudeDelta))
-            
-            //print("NW: \(self.nwLat as Optional), \(self.nwLng as Optional)\n")
-            //print("SE: \(self.seLat as Optional), \(self.seLng as Optional)\n")
-            
         } else {
             //return a failure, the coordinate wasn't updated
         }
     }
     
     public func fetchJson() {
-        
         if let nwLat = self.nwLat, let nwLng = self.nwLng, let seLat = self.seLat, let seLng = self.seLng {
             let urlString = "https://www.purpleair.com/data.json?opt=1/i/mAQI/a10/cC4&fetch=true&nwlat=" + "\(nwLat)" + "&selat=" + "\(seLat)" + "&nwlng=" + "\(nwLng)" + "&selng=" + "\(seLng)" + "&fields=pm_1,"
             print(urlString)
@@ -119,9 +119,15 @@ public class AQIData {
                                 // also 10th field is a flag from purple air
                                 // if flag is 1, it's marked as bad data
                                 if value[4] as! Int == 0, value[9] as! Int == 0{
-                                    print(value[2])
+                                    // if the values returned from purple air are what they should be, append a new tuple to our PM array
+                                    if let PMValue = value[2] as? Float, let lat = value[6] as? Double, let lng = value[7] as? Double {
+                                        let coordinate = CLLocationCoordinate2DMake(lat, lng)
+                                        self.PMArr.append((PMValue, coordinate))
+                                        print (PMValue)
+                                    }
                                 }
                             }
+                            self.calcPM()
                         }
                     }
                 } catch let err {
@@ -130,17 +136,60 @@ public class AQIData {
             }
             task.resume()
             
-            
-            
         } else {
             // return, one of the class coordinates was nil
         }
-        
-        
-        
     }
     
-    public func aqiFromPM(pmValue: Float) {
+    public func calcPM() {
+        if let center = self.zipCoordinate {
+            // convert our set filter distance in miles to meters
+            let meters = self.filterDistance * 1609
+            let region = MKCoordinateRegion(center: center, latitudinalMeters: meters, longitudinalMeters: meters)
+            
+            var pmSum: Float = 0
+            for tuple in self.PMArr {
+                if isCoordinate(coordinate: tuple.1, region: region) {
+                    print (tuple.0)
+                    pmSum += tuple.0
+                }
+            }
+            // average the sum of the PM 2.5 measurements
+            pmSum = pmSum / Float(self.PMArr.count)
+            setAQI(pmValue: pmSum)
+        }
+    }
+    
+    public func test() {
+        print("Here1")
+        if let center = self.zipCoordinate {
+            let region = MKCoordinateRegion(center: center, latitudinalMeters: 1600, longitudinalMeters: 1600)
+            print("Here2")
+            if isCoordinate(coordinate: center, region: region) {
+                print("Here3")
+            }
+        }
+    }
+    
+    // private helper function for calcPM
+    // returns if a coordinate is in the set filter region
+    private func isCoordinate (coordinate: CLLocationCoordinate2D, region: MKCoordinateRegion) -> Bool {
+        let center = region.center
+        var nwLat: Double
+        var nwLng: Double
+        var seLat: Double
+        var seLng: Double
+        
+        nwLat = center.latitude + (0.5 * (region.span.latitudeDelta))
+        nwLng = center.longitude - (0.5 * (region.span.longitudeDelta))
+        seLat = center.latitude - (0.5 * (region.span.latitudeDelta))
+        seLng = center.longitude + (0.5 * (region.span.longitudeDelta))
+        
+        return (coordinate.latitude <= nwLat && coordinate.latitude >= seLat && coordinate.longitude <= nwLng && coordinate.longitude >= seLng)
+    }
+    
+    // take a raw PM2.5 value and set class AQI value with a calculated AQI
+    private func setAQI(pmValue: Float) {
         // error check pm value
         // if anything is wrong, just set aqi to nil
         if pmValue.isNaN {
@@ -168,10 +217,14 @@ public class AQIData {
         } else if pmValue >= 0 {
             self.AQI = calcAQI(Cp: pmValue, Ih: 50, Il: 0, BPh: 12, BPl: 0)
         }
+        
+        print(pmValue)
+        print(self.AQI as Any)
     }
     
     // taken from purple air's FAQ
-    public func calcAQI(Cp: Float, Ih: Float, Il: Float, BPh: Float, BPl: Float) -> Float {
+    // private helper function to do the actual AQI calc
+    private func calcAQI(Cp: Float, Ih: Float, Il: Float, BPh: Float, BPl: Float) -> Float {
         let a = (Ih - Il)
         let b = (BPh - BPl)
         let c = (Cp - BPl)
@@ -185,8 +238,6 @@ public class AQIData {
     public func updateData() {
         
     }
-    
-    
     
     // shared instance of the AQI data
     // chose singleton so that I can just throw AQI data in here and pull from it wherever

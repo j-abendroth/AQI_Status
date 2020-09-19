@@ -29,6 +29,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         
         
         AQIData.shared.fetchCoordinates()
+        //AQIData.shared.test()
     }
 
     override var representedObject: Any? {
