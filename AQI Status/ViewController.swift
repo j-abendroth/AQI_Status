@@ -30,8 +30,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         // start the timer to update the AQI every 30 minutes
         
         
-        
-        AQIData.shared.fetchCoordinates()
+        AQIData.shared.updateData()
     }
 
     override var representedObject: Any? {

@@ -28,7 +28,7 @@ public class AQIData {
         self.zipCode = zip
         self.cityName = "-"
         self.stateName = "-"
-        self.filterDistance = 6.0
+        self.filterDistance = 7.0
         self.PMArr = []
     }
     
@@ -92,6 +92,7 @@ public class AQIData {
     }
     // inaccurate way to calculate the bounding box, but simple
     // decided to settle for a decent approximation rather than work out a ton of math
+    // function is NOT asynchronous but decided to use a completion handler as well to stay consistent with everything else
     private func genBoundryBox(completion: @escaping (Result <(nwLat: Double, nwLng: Double, seLat: Double, seLng: Double), boundryError>) -> Void) {
         // going to cache all sensors within the max 10 mi filter distance
         // 10 mi = ~16,100 m
@@ -165,12 +166,13 @@ public class AQIData {
                                 // also 10th field is a flag from purple air
                                 // if flag is 1, it's marked as bad data
                                 if value[4] as! Int == 0, value[9] as! Int == 0{
-                                    // if the values returned from purple air are what they should be, append a new tuple to our PM array
-                                    if let PMValue = value[2] as? Float, let lat = value[6] as? Double, let lng = value[7] as? Double {
-                                        let coordinate = CLLocationCoordinate2DMake(lat, lng)
-                                        PMArr.append((PMValue, coordinate))
-                                        print (PMValue)
-                                    }
+                                    // take all values as NSNumber since that's JSON standard
+                                    // avoids the bug where NSNumber wouldn't downcast to float because of loss of precision due to 64bit vs 32bit fp
+                                    let PMValue = value[2] as! NSNumber
+                                    let lat = value[6] as! NSNumber
+                                    let lng = value[7] as! NSNumber
+                                    let coordinate = CLLocationCoordinate2DMake(lat.doubleValue, lng.doubleValue)
+                                    PMArr.append((PMValue.floatValue, coordinate))
                                 }
                             }
                         }
@@ -239,7 +241,7 @@ public class AQIData {
         if pmValue.isNaN {
             self.AQI = nil
         }
-        if pmValue < 0 {
+        if pmValue <= 0 {
             self.AQI = pmValue
         }
         if (pmValue > 1000) {
@@ -280,7 +282,71 @@ public class AQIData {
     }
     
     public func updateData() {
-        
+        DispatchQueue.global(qos: .userInitiated).async {
+            // set semaphore equal to 0 to start
+            // fetchCoordinates() is async so semaphore will be decremented right away
+            // block on semaphore.wait() until coordinates are returned
+            var semaphore = DispatchSemaphore(value: 0)
+            
+            self.fetchCoordinates() { (result) in
+                switch result {
+                case .success((let zipCoordinate, let cityName, let stateName)):
+                    self.zipCoordinate = zipCoordinate
+                    self.cityName = cityName
+                    self.stateName = stateName
+                    // increment semaphore to continue
+                    semaphore.signal()
+                case .failure(let error):
+                    // error occured in getting coordinates from geocoder
+                    // reset all the values
+                    self.zipCoordinate = nil
+                    self.cityName = "-"
+                    self.stateName = "-"
+                    print(error.localizedDescription)
+                    return
+                }
+            }
+            semaphore.wait()
+            
+            // genBoundryBox is NOT asynchronous
+            // no need to use semaphore
+            self.genBoundryBox() { (result) in
+                switch result {
+                case .success((let nwLat, let nwLng, let seLat, let seLng)):
+                    self.nwLat = nwLat
+                    self.nwLng = nwLng
+                    self.seLat = seLat
+                    self.seLng = seLng
+                case .failure(let error):
+                    self.nwLat = nil
+                    self.nwLng = nil
+                    self.seLat = nil
+                    self.seLng = nil
+                    print(error.localizedDescription)
+                    return
+                }
+            }
+            
+            self.fetchPurpleAir() { (result) in
+                switch result {
+                case .success(let PMArr):
+                    // update class's pm array to the newest returned one
+                    self.PMArr = PMArr
+                    semaphore.signal()
+                case .failure(let error):
+                    // set array equal to new empty array to clear it since fetching the PM array failed
+                    self.PMArr = []
+                    print(error.localizedDescription)
+                    return
+                }
+            }
+            
+            semaphore.wait()
+            
+            // all async calls are done
+            // now just calc the AQI value and set it
+            self.calcPM()
+        }
     }
     
     // shared instance of the AQI data
