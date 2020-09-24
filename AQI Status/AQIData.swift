@@ -12,6 +12,8 @@ import MapKit
 public class AQIData {
     public var zipCode: String
     public var zipCoordinate: CLLocationCoordinate2D?
+    public var cityName: String
+    public var stateName: String
     public var filterDistance: Double
     public var filterRegion: MKCoordinateRegion?
     public var PMArr: [(pmValue: Float, coordinate: CLLocationCoordinate2D)]
@@ -24,91 +26,136 @@ public class AQIData {
     
     public init(zip: String) {
         self.zipCode = zip
+        self.cityName = "-"
+        self.stateName = "-"
         self.filterDistance = 6.0
         self.PMArr = []
     }
     
+    enum coordinateError: Error {
+        case geocodeError
+        case missingLocation
+        case missingCity
+        case missingState
+    }
+    
     // public function used to update the current coordinates stored in the class
     // will forward geocode the currently stored zip code data
-    public func fetchCoordinates() {
+    private func fetchCoordinates(completion: @escaping (Result <(zipCoordinate: CLLocationCoordinate2D, cityName: String, stateName: String), coordinateError>) -> Void) {
         let geocoder = CLGeocoder()
         // call the CLGeocoder api on the current zip code
         geocoder.geocodeAddressString(zipCode) { (placemarks, error) in
             // check to make sure the geocoder didn't return an error
-            // if so, update the coordinate to nil
-            if let error = error {
-                print("Unable to get coordinates from current zip code: \(error)")
-                self.zipCoordinate = nil
+            // if so, set completion to failure and return
+            guard error == nil else {
+                completion(.failure(.geocodeError))
+                return
             }
-            else {
-                var location: CLLocation?
-                // we only care about the first placemark returned, even if > 1 are returned
-                // just want an approximation for location, so first one is good enough
-                if let placemark = placemarks?[0] {
-                    location = placemark.location
-                }
-                // if location was set successfully, set our class coordinate equal to its coordinate
-                if let location = location {
-                    self.zipCoordinate = location.coordinate
-                    self.genBoundryBox()
-                    self.fetchJson()
-                } else {
-                    // if we get here, set coordinate to nil to indicate error
-                    self.zipCoordinate = nil
-                }
+            
+            var location: CLLocation?
+            var city: String?
+            var state: String?
+            
+            // we only care about the first placemark returned, even if > 1 are returned
+            // just want an approximation for location, so first one is good enough
+            if let placemark = placemarks?[0] {
+                location = placemark.location
+                city = placemark.locality
+                state = placemark.administrativeArea
             }
+            
+            // test if the geocoder placemark returned each of the 3 things we need
+            // if any 1 is missing, set failure and return
+            guard let zipCoordinate = location?.coordinate else {
+                completion(.failure(.missingLocation))
+                return
+            }
+            
+            guard let cityName = city else {
+                completion(.failure(.missingCity))
+                return
+            }
+            
+            guard let stateName = state else {
+                completion(.failure(.missingState))
+                return
+            }
+            
+            // else everything is there and we can return success
+            // we're returning a tuple with the 3 different values we want
+            completion(.success((zipCoordinate: zipCoordinate, cityName: cityName, stateName: stateName)))
         }
-        // signal we're done with the GLGeocoder api call
     }
     
+    enum boundryError: Error {
+        case zipCoordinateNil
+    }
     // inaccurate way to calculate the bounding box, but simple
     // decided to settle for a decent approximation rather than work out a ton of math
-    public func genBoundryBox() {
+    private func genBoundryBox(completion: @escaping (Result <(nwLat: Double, nwLng: Double, seLat: Double, seLng: Double), boundryError>) -> Void) {
         // going to cache all sensors within the max 10 mi filter distance
         // 10 mi = ~16,100 m
         if let center = self.zipCoordinate {
             let region = MKCoordinateRegion(center: center, latitudinalMeters: 16100, longitudinalMeters: 16100)
-            self.nwLat = center.latitude + (0.5 * (region.span.latitudeDelta))
-            self.nwLng = center.longitude - (0.5 * (region.span.longitudeDelta))
-            self.seLat = center.latitude - (0.5 * (region.span.latitudeDelta))
-            self.seLng = center.longitude + (0.5 * (region.span.longitudeDelta))
+            let nwLat = center.latitude + (0.5 * (region.span.latitudeDelta))
+            let nwLng = center.longitude - (0.5 * (region.span.longitudeDelta))
+            let seLat = center.latitude - (0.5 * (region.span.latitudeDelta))
+            let seLng = center.longitude + (0.5 * (region.span.longitudeDelta))
+            
+            completion(.success((nwLat, nwLng, seLat, seLng)))
         } else {
             //return a failure, the coordinate wasn't updated
+            completion(.failure(.zipCoordinateNil))
         }
     }
     
-    public func fetchJson() {
+    enum PurpleAirError: Error {
+        case badURL
+        case requestFailed
+        case dataFailure
+        case URLSessionError
+        case jsonDecodeError
+        case coordinateError
+    }
+    
+    // set up the private fetchPurpleAir function to return a result type
+    // return the array of json parsed PMValues and coordinates to the completion handler if successfull
+    // otherwise send a result type of failure with the case
+    private func fetchPurpleAir(completion: @escaping (Result<[(pmValue: Float, coordinate: CLLocationCoordinate2D)], PurpleAirError>) -> Void) {
         if let nwLat = self.nwLat, let nwLng = self.nwLng, let seLat = self.seLat, let seLng = self.seLng {
             let urlString = "https://www.purpleair.com/data.json?opt=1/i/mAQI/a10/cC4&fetch=true&nwlat=" + "\(nwLat)" + "&selat=" + "\(seLat)" + "&nwlng=" + "\(nwLng)" + "&selng=" + "\(seLng)" + "&fields=pm_1,"
             print(urlString)
             
             guard let url = URL(string: urlString) else {
                 // error assigning url, can't complete get request
+                completion(.failure(.badURL))
                 return
             }
             
             let task = URLSession.shared.dataTask(with: url) { (data, response, err) in
                 if err != nil {
                     // caught an error
-                    print("caught an error")
-                    return
+                    completion(.failure(.URLSessionError))
                 }
                 
                 guard response != nil else {
                     // no response from api
                     // possibly rate limited
-                    print("no response")
+                    completion(.failure(.requestFailed))
                     return
                 }
                 
                 guard let data = data else {
                     // no data returned from api
                     // either rate limited or filtering distance is too low
+                    completion(.failure(.dataFailure))
                     return
                 }
                 
                 do {
                     if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                        var PMArr: [(pmValue: Float, coordinate: CLLocationCoordinate2D)] = []
+                        
                         if let data = json["data"] as? Array<Array<Any>> {
                             // value is now an array of any in the array data
                             // loop through all value arrays
@@ -121,15 +168,18 @@ public class AQIData {
                                     // if the values returned from purple air are what they should be, append a new tuple to our PM array
                                     if let PMValue = value[2] as? Float, let lat = value[6] as? Double, let lng = value[7] as? Double {
                                         let coordinate = CLLocationCoordinate2DMake(lat, lng)
-                                        self.PMArr.append((PMValue, coordinate))
+                                        PMArr.append((PMValue, coordinate))
                                         print (PMValue)
                                     }
                                 }
                             }
-                            self.calcPM()
                         }
+                        // returning the completion for the PMarr
+                        // put outside the if let statement so that if the deserialization fails it just returns an empty array
+                        completion(.success(PMArr))
                     }
                 } catch let err {
+                    completion(.failure(.jsonDecodeError))
                     print(err.localizedDescription)
                 }
             }
@@ -137,6 +187,7 @@ public class AQIData {
             
         } else {
             // return, one of the class coordinates was nil
+            completion(.failure(.coordinateError))
         }
     }
     
@@ -156,6 +207,7 @@ public class AQIData {
                 }
             }
             // average the sum of the PM 2.5 measurements by the number of tuples we found were in the filter distance
+            // if count is 0, pmSum is 0 so just set the AQI to that
             if count > 0 {
                 pmSum = pmSum / count
             }

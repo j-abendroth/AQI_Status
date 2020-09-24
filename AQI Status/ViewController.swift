@@ -16,6 +16,9 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         AQIData.shared.zipCode = zipCodeTextField.stringValue
         print("Changed text = \(zipCodeTextField.stringValue)\n")
     }
+    @IBOutlet weak var AQINum: NSTextField!
+    @IBOutlet weak var AQIDescription: NSTextField!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
