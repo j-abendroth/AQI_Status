@@ -14,6 +14,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     func controlTextDidEndEditing(_ obj: Notification) {
         // once the zip code is entered, update the stored zip code value
         AQIData.shared.zipCode = zipCodeTextField.stringValue
+        AQIData.shared.updateData()
         print("Changed text = \(zipCodeTextField.stringValue)\n")
     }
     @IBOutlet weak var AQINum: NSTextField!

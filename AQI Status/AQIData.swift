@@ -11,14 +11,13 @@ import MapKit
 
 public class AQIData {
     public var zipCode: String
-    public var zipCoordinate: CLLocationCoordinate2D?
     public var cityName: String
     public var stateName: String
     public var filterDistance: Double
-    public var filterRegion: MKCoordinateRegion?
-    public var PMArr: [(pmValue: Float, coordinate: CLLocationCoordinate2D)]
     public var AQI: Float?
     
+    private var zipCoordinate: CLLocationCoordinate2D?
+    private var PMArr: [(pmValue: Float, coordinate: CLLocationCoordinate2D)]
     private var nwLat: Double?
     private var nwLng: Double?
     private var seLat: Double?
@@ -28,7 +27,7 @@ public class AQIData {
         self.zipCode = zip
         self.cityName = "-"
         self.stateName = "-"
-        self.filterDistance = 7.0
+        self.filterDistance = 2 // default filter distance set to 1.5 mi
         self.PMArr = []
     }
     
@@ -39,12 +38,12 @@ public class AQIData {
         case missingState
     }
     
-    // public function used to update the current coordinates stored in the class
-    // will forward geocode the currently stored zip code data
+    // function used to get location data based on a zip code
+    // will forward geocode the currently stored zip code data and return the info to the completion handler
     private func fetchCoordinates(completion: @escaping (Result <(zipCoordinate: CLLocationCoordinate2D, cityName: String, stateName: String), coordinateError>) -> Void) {
         let geocoder = CLGeocoder()
         // call the CLGeocoder api on the current zip code
-        geocoder.geocodeAddressString(zipCode) { (placemarks, error) in
+        geocoder.geocodeAddressString(self.zipCode) { (placemarks, error) in
             // check to make sure the geocoder didn't return an error
             // if so, set completion to failure and return
             guard error == nil else {
@@ -90,6 +89,7 @@ public class AQIData {
     enum boundryError: Error {
         case zipCoordinateNil
     }
+    
     // inaccurate way to calculate the bounding box, but simple
     // decided to settle for a decent approximation rather than work out a ton of math
     // function is NOT asynchronous but decided to use a completion handler as well to stay consistent with everything else
@@ -119,7 +119,7 @@ public class AQIData {
         case coordinateError
     }
     
-    // set up the private fetchPurpleAir function to return a result type
+    // main function to handle api call to purple air
     // return the array of json parsed PMValues and coordinates to the completion handler if successfull
     // otherwise send a result type of failure with the case
     private func fetchPurpleAir(completion: @escaping (Result<[(pmValue: Float, coordinate: CLLocationCoordinate2D)], PurpleAirError>) -> Void) {
@@ -168,6 +168,7 @@ public class AQIData {
                                 if value[4] as! Int == 0, value[9] as! Int == 0{
                                     // take all values as NSNumber since that's JSON standard
                                     // avoids the bug where NSNumber wouldn't downcast to float because of loss of precision due to 64bit vs 32bit fp
+                                    // https://stackoverflow.com/a/50019421
                                     let PMValue = value[2] as! NSNumber
                                     let lat = value[6] as! NSNumber
                                     let lng = value[7] as! NSNumber
@@ -193,6 +194,9 @@ public class AQIData {
         }
     }
     
+    // public calc pm function
+    // called within updateData() or can be called separate
+    // should be called separate if the filter region is changed, will then recalculate aqi based on cached PM values
     public func calcPM() {
         if let center = self.zipCoordinate {
             // convert our set filter distance in miles to meters
@@ -281,6 +285,9 @@ public class AQIData {
         return aqi
     }
     
+    // public function which should be called whenever a new zip code is input
+    // use this to update the aqi value outside the class
+    // runs the processing on a background thread and synchronizes the api calls
     public func updateData() {
         DispatchQueue.global(qos: .userInitiated).async {
             // set semaphore equal to 0 to start
@@ -299,9 +306,7 @@ public class AQIData {
                 case .failure(let error):
                     // error occured in getting coordinates from geocoder
                     // reset all the values
-                    self.zipCoordinate = nil
-                    self.cityName = "-"
-                    self.stateName = "-"
+                    self.updateError()
                     print(error.localizedDescription)
                     return
                 }
@@ -318,10 +323,7 @@ public class AQIData {
                     self.seLat = seLat
                     self.seLng = seLng
                 case .failure(let error):
-                    self.nwLat = nil
-                    self.nwLng = nil
-                    self.seLat = nil
-                    self.seLng = nil
+                    self.updateError()
                     print(error.localizedDescription)
                     return
                 }
@@ -334,18 +336,42 @@ public class AQIData {
                     self.PMArr = PMArr
                     semaphore.signal()
                 case .failure(let error):
-                    // set array equal to new empty array to clear it since fetching the PM array failed
-                    self.PMArr = []
+                    self.updateError()
                     print(error.localizedDescription)
                     return
                 }
             }
-            
             semaphore.wait()
             
             // all async calls are done
             // now just calc the AQI value and set it
             self.calcPM()
+        }
+    }
+    
+    private func updateError() {
+        // clear all data values since something went wrong updating the aqi data
+        self.zipCoordinate = nil
+        self.cityName = "-"
+        self.stateName = "-"
+        
+        // reset individual coordinate parts so that the url can't be made
+        self.nwLat = nil
+        self.nwLng = nil
+        self.seLat = nil
+        self.seLng = nil
+        
+        // set PM array equal to new empty array to clear it
+        self.PMArr = []
+        
+        // post alert that updating failed
+        let alert = NSAlert()
+        alert.messageText = "Oops"
+        alert.informativeText = "AQI data update failed. Please try again in a few seconds"
+        alert.addButton(withTitle: "Okay")
+        
+        DispatchQueue.main.async {
+            alert.runModal()
         }
     }
     
