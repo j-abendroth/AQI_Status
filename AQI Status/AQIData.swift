@@ -20,6 +20,9 @@ public class AQIData {
     public var LRAPA: Bool
     public var avgSelection: String
     public var pmNum: String
+    // bool to keep track if we're fetching new data from PA vs refreshing a PM calc
+    // want the date string to only update when fetching new data from PA
+    public var fetchNewData: Bool
     
     private var zipCoordinate: CLLocationCoordinate2D?
     private var PMArr: [(pmValue: Float, coordinate: CLLocationCoordinate2D)]
@@ -36,6 +39,7 @@ public class AQIData {
         self.PMArr = []
         self.AQandU = false
         self.LRAPA = false
+        self.fetchNewData = false
         self.avgSelection = "a10"
         self.pmNum = "pm_1,"
     }

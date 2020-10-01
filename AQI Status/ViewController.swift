@@ -19,6 +19,8 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     func controlTextDidEndEditing(_ obj: Notification) {
         // once the zip code is entered, update the stored zip code value
         AQIData.shared.zipCode = zipCodeTextField.stringValue
+        // signal we're fetching new data from PA
+        AQIData.shared.fetchNewData = true
         AQIData.shared.updateData()
         print("Changed text = \(zipCodeTextField.stringValue)\n")
     }
@@ -32,6 +34,8 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     @IBAction func sliderValueChanged(_ sender: Any) {
         // update new filtering distance and recalculate AQI once slider has changed
         AQIData.shared.filterDistance = distanceFilterSlider.doubleValue
+        // signal we're just refreshing the cached PM data
+        AQIData.shared.fetchNewData = false
         DispatchQueue.global(qos: .userInitiated).async {
             AQIData.shared.calcPM()
         }
@@ -53,6 +57,8 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             AQIData.shared.LRAPA = true
         }
         
+        // signal we're just refreshing the cached PM data
+        AQIData.shared.fetchNewData = false
         DispatchQueue.global(qos: .userInitiated).async {
             AQIData.shared.calcPM()
         }
@@ -85,7 +91,8 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             AQIData.shared.avgSelection = "a10080"
             AQIData.shared.pmNum = "pm_6,"
         }
-        
+        // signal we're fetching new data from PA
+        AQIData.shared.fetchNewData = true
         AQIData.shared.updateData()
     }
     
@@ -106,6 +113,7 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         // start the timer to update the AQI every 30 minutes
         startTimer()
         // get initial update of the app
+        AQIData.shared.fetchNewData = true
         AQIData.shared.updateData()
     }
 
@@ -129,6 +137,8 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     // 15 min = 900 sec
     private func startTimer() {
         timer = Timer.scheduledTimer(withTimeInterval: 900.0, repeats: true) { [weak self] timer in
+            // signal we're fetching new data from PA
+            AQIData.shared.fetchNewData = true
             AQIData.shared.updateData()
         }
     }
@@ -152,7 +162,10 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             self.AQINum.stringValue = AQIString
             self.AQIDescription.stringValue = AQIData.shared.getAQIDescription()
             self.cityName.stringValue = AQIData.shared.cityName + ", " + AQIData.shared.stateName
-            self.dateString.objectValue = Date()
+            // only want to update the date string when we've fetched new data from purple air
+            if AQIData.shared.fetchNewData {
+                self.dateString.objectValue = Date()
+            }
             button.title = AQIString
         }
     }
