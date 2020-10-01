@@ -11,7 +11,10 @@ import Cocoa
 import Foundation
 
 class ViewController: NSViewController, NSTextFieldDelegate {
+    // setup the timer that will auto update the AQI data every 15 minutes
+    weak var timer: Timer?
     
+    // set up zip code text box and triggered function for when a new zip code is entered
     @IBOutlet weak var zipCodeTextField: NSTextField!
     func controlTextDidEndEditing(_ obj: Notification) {
         // once the zip code is entered, update the stored zip code value
@@ -22,13 +25,18 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     @IBOutlet weak var AQINum: NSTextField!
     @IBOutlet weak var AQIDescription: NSTextField!
     @IBOutlet weak var cityName: NSTextField!
+    @IBOutlet weak var dateString: NSTextField!
     
+    // set up the distance filter slider and trigger a recalc of the PM data when the slider is moved
     @IBOutlet weak var distanceFilterSlider: NSSlider!
     @IBAction func sliderValueChanged(_ sender: Any) {
         // update new filtering distance and recalculate AQI once slider has changed
         AQIData.shared.filterDistance = distanceFilterSlider.doubleValue
-        AQIData.shared.calcPM()
+        DispatchQueue.global(qos: .userInitiated).async {
+            AQIData.shared.calcPM()
+        }
     }
+    // if new conversion menu option is selected, recalc the PM data
     @IBOutlet weak var conversionPopup: NSPopUpButton!
     @IBAction func conversionSelected(_ sender: Any) {
         let conversionSelected = conversionPopup.titleOfSelectedItem
@@ -45,9 +53,11 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             AQIData.shared.LRAPA = true
         }
         
-        AQIData.shared.calcPM()
+        DispatchQueue.global(qos: .userInitiated).async {
+            AQIData.shared.calcPM()
+        }
     }
-    
+    // if new data averaging length is selected, re updated all AQI data
     @IBOutlet weak var dataAveragePopup: NSPopUpButton!
     @IBAction func averageSelected(_ sender: Any) {
         let avgSelected = dataAveragePopup.titleOfSelectedItem
@@ -79,7 +89,6 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         AQIData.shared.updateData()
     }
     
-    
     @IBAction func quitButton(_ sender: Any) {
         NSApplication.shared.terminate(self)
     }
@@ -91,12 +100,12 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         // set default zip code entry to Santa Cruz
         zipCodeTextField.stringValue = "95062"
         
-        // setup notification observer
+        // setup notification observer for UI updates
         NotificationCenter.default.addObserver(self, selector: #selector(updateAQIView(_:)), name: .updateAQI, object: nil)
         
         // start the timer to update the AQI every 30 minutes
-        
-        
+        startTimer()
+        // get initial update of the app
         AQIData.shared.updateData()
     }
 
@@ -116,6 +125,19 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         return viewcontroller
     }
     
+    // set up the timer to fetch new data every 15 minutes
+    // 15 min = 900 sec
+    private func startTimer() {
+        timer = Timer.scheduledTimer(withTimeInterval: 900.0, repeats: true) { [weak self] timer in
+            AQIData.shared.updateData()
+        }
+    }
+    
+    private func stopTimer() {
+        timer?.invalidate()
+    }
+    
+    // the function triggered from notification center to update the UI
     @objc func updateAQIView(_ notification: Notification) {
         // accessing app delegate has to be run on main queue
         // update the UI fields when trigged by a notification
@@ -130,13 +152,17 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             self.AQINum.stringValue = AQIString
             self.AQIDescription.stringValue = AQIData.shared.getAQIDescription()
             self.cityName.stringValue = AQIData.shared.cityName + ", " + AQIData.shared.stateName
+            self.dateString.objectValue = Date()
             button.title = AQIString
         }
     }
     
+    
+    
     // remove timer and notification center observer
     deinit {
         NotificationCenter.default.removeObserver(self, name: .updateAQI, object: nil)
+        stopTimer()
     }
 }
 
