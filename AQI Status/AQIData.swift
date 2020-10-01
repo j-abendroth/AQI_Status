@@ -16,6 +16,8 @@ public class AQIData {
     public var stateName: String
     public var filterDistance: Double
     public var AQI: Float?
+    public var AQandU: Bool
+    public var LRAPA: Bool
     
     private var zipCoordinate: CLLocationCoordinate2D?
     private var PMArr: [(pmValue: Float, coordinate: CLLocationCoordinate2D)]
@@ -30,6 +32,8 @@ public class AQIData {
         self.stateName = "-"
         self.filterDistance = 2.0 // default filter distance set to 2 mi
         self.PMArr = []
+        self.AQandU = false
+        self.LRAPA = false
     }
     
     enum coordinateError: Error {
@@ -217,6 +221,16 @@ public class AQIData {
             // if count is 0, pmSum is 0 so just set the AQI to that
             if count > 0 {
                 pmSum = pmSum / count
+                
+                // check if conversions selected
+                // conversion equations taken from Purple Air's website
+                if self.AQandU {
+                    pmSum = (0.778 * pmSum) + 2.65
+                }
+                
+                else if self.LRAPA {
+                    pmSum = (0.5 * pmSum) - 0.66
+                }
             }
             setAQI(pmValue: pmSum)
         }

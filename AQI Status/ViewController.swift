@@ -25,11 +25,37 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     
     @IBOutlet weak var distanceFilterSlider: NSSlider!
     @IBAction func sliderValueChanged(_ sender: Any) {
-        // update new filtering distance and recalculate AQI
+        // update new filtering distance and recalculate AQI once slider has changed
         AQIData.shared.filterDistance = distanceFilterSlider.doubleValue
         AQIData.shared.calcPM()
     }
+    @IBOutlet weak var conversionPopup: NSPopUpButton!
+    @IBAction func conversionSelected(_ sender: Any) {
+        let conversionSelected = conversionPopup.titleOfSelectedItem
+        if conversionSelected == "None" {
+            AQIData.shared.AQandU = false
+            AQIData.shared.LRAPA = false
+        }
+        if conversionSelected == "AQandU" {
+            AQIData.shared.AQandU = true
+            AQIData.shared.LRAPA = false
+        }
+        if conversionSelected == "LRAPA" {
+            AQIData.shared.AQandU = false
+            AQIData.shared.LRAPA = true
+        }
+        
+        AQIData.shared.calcPM()
+    }
     
+    @IBOutlet weak var dataAveragePopup: NSPopUpButton!
+    @IBAction func averageSelected(_ sender: Any) {
+    }
+    
+    
+    @IBAction func quitButton(_ sender: Any) {
+        NSApplication.shared.terminate(self)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()

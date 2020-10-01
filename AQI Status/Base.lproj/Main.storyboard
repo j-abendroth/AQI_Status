@@ -690,7 +690,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kVy-s0-lAQ">
-                                <rect key="frame" x="211" y="20" width="56" height="21"/>
+                                <rect key="frame" x="211" y="53" width="56" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="56" id="l9u-Cz-n9L"/>
                                 </constraints>
@@ -705,78 +705,151 @@
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Gfo-gH-soJ">
-                                <rect key="frame" x="103" y="23" width="102" height="16"/>
+                                <rect key="frame" x="103" y="56" width="102" height="16"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="5 digit zip code:" id="0Xz-LR-2bt">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WOt-q5-rS5">
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WOt-q5-rS5">
                                 <rect key="frame" x="113" y="397" width="146" height="22"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Air Quality Index:" id="S7e-ab-0PX">
                                     <font key="font" size="18" name="Helvetica"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OJs-s9-1PG">
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OJs-s9-1PG">
                                 <rect key="frame" x="138" y="309" width="96" height="16"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="92" id="2O3-vL-o8N"/>
+                                    <constraint firstAttribute="height" constant="16" id="6jh-Th-5cV"/>
+                                </constraints>
                                 <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Santa Cruz, CA" id="mFa-gU-zdV">
-                                    <font key="font" metaFont="system" size="11"/>
+                                    <font key="font" metaFont="smallSystem"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VpS-S6-NZo">
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="VpS-S6-NZo">
                                 <rect key="frame" x="151" y="362" width="71" height="27"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" alignment="center" title="000.0" id="uyC-Y7-596">
                                     <font key="font" metaFont="system" size="23"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2pn-XR-RBr">
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="2pn-XR-RBr">
                                 <rect key="frame" x="29" y="333" width="315" height="27"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Unhealthy for Sensitive Groups" id="w0P-Pg-Iou">
                                     <font key="font" metaFont="system" size="23"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <slider verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="a3A-SJ-Msj">
-                                <rect key="frame" x="135" y="48" width="102" height="25"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <slider verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="a3A-SJ-Msj">
+                                <rect key="frame" x="135" y="81" width="102" height="25"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="98" id="HM9-Zg-ZCW"/>
+                                    <constraint firstAttribute="height" constant="22" id="Whm-LT-iOs"/>
+                                </constraints>
                                 <sliderCell key="cell" state="on" alignment="left" minValue="1" maxValue="10" doubleValue="2" tickMarkPosition="below" numberOfTickMarks="10" allowsTickMarkValuesOnly="YES" sliderType="linear" id="5Ec-8k-8iO"/>
                                 <connections>
                                     <action selector="sliderValueChanged:" target="XfG-lQ-9wD" id="2ad-Xs-cAh"/>
                                 </connections>
                             </slider>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Zfm-aF-Awz">
-                                <rect key="frame" x="135" y="79" width="95" height="16"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Zfm-aF-Awz">
+                                <rect key="frame" x="135" y="112" width="95" height="16"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Distance Filter:" id="nkM-7g-4BM">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="shg-7p-dWs">
+                                <rect key="frame" x="117" y="5" width="133" height="32"/>
+                                <buttonCell key="cell" type="push" title="Quit AQI Status" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="HFh-sp-NeF">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="quitButton:" target="XfG-lQ-9wD" id="AO0-Ln-SYT"/>
+                                </connections>
+                            </button>
+                            <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="KK9-Lj-zDy">
+                                <rect key="frame" x="164" y="161" width="143" height="25"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <popUpButtonCell key="cell" type="push" title="10 Minute Average" bezelStyle="rounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="ITf-oK-8Bt" id="nYE-D6-gIk">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" id="rCs-VY-501">
+                                        <items>
+                                            <menuItem title="Realtime" id="zak-Z9-Z96"/>
+                                            <menuItem title="10 Minute Average" state="on" id="ITf-oK-8Bt"/>
+                                            <menuItem title="30 Minute Average" id="cUb-42-Yg2"/>
+                                            <menuItem title="1 Hour Average" id="tHI-gX-Q4a">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="1 Day Average" id="CGb-w7-euP">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="1 Week Average" id="YAk-h9-seI">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                                <connections>
+                                    <action selector="averageSelected:" target="XfG-lQ-9wD" id="5Nr-Ym-aSe"/>
+                                </connections>
+                            </popUpButton>
+                            <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Cgm-hm-6Vm">
+                                <rect key="frame" x="29" y="161" width="89" height="25"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <popUpButtonCell key="cell" type="push" title="None" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="y89-R4-kHB" id="muA-RJ-plq">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" id="iZB-Ws-6rR">
+                                        <items>
+                                            <menuItem title="None" state="on" id="y89-R4-kHB"/>
+                                            <menuItem title="AQandU" id="oqF-14-FcI"/>
+                                            <menuItem title="LRAPA" id="D4k-Pa-4kP"/>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                                <connections>
+                                    <action selector="conversionSelected:" target="XfG-lQ-9wD" id="S1A-f1-cyc"/>
+                                </connections>
+                            </popUpButton>
                         </subviews>
                         <constraints>
-                            <constraint firstAttribute="bottom" secondItem="kVy-s0-lAQ" secondAttribute="bottom" constant="20" symbolic="YES" id="21y-Fy-b8X"/>
-                            <constraint firstItem="kVy-s0-lAQ" firstAttribute="baseline" secondItem="Gfo-gH-soJ" secondAttribute="baseline" id="Fbh-GD-3eD"/>
-                            <constraint firstAttribute="trailing" secondItem="kVy-s0-lAQ" secondAttribute="trailing" constant="106" id="aUD-p9-UNm"/>
-                            <constraint firstItem="kVy-s0-lAQ" firstAttribute="leading" secondItem="Gfo-gH-soJ" secondAttribute="trailing" constant="8" symbolic="YES" id="orP-0N-M6V"/>
+                            <constraint firstItem="OJs-s9-1PG" firstAttribute="top" secondItem="2pn-XR-RBr" secondAttribute="bottom" constant="8" symbolic="YES" id="2aW-VC-Dx3"/>
+                            <constraint firstItem="WOt-q5-rS5" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="11" id="8Lw-RC-9nb"/>
+                            <constraint firstItem="kVy-s0-lAQ" firstAttribute="leading" secondItem="Gfo-gH-soJ" secondAttribute="trailing" constant="8" symbolic="YES" id="9UN-6z-HTJ"/>
+                            <constraint firstItem="kVy-s0-lAQ" firstAttribute="baseline" secondItem="Gfo-gH-soJ" secondAttribute="baseline" id="BLE-jM-oqO"/>
+                            <constraint firstAttribute="bottom" secondItem="kVy-s0-lAQ" secondAttribute="bottom" constant="53" id="Dyb-S0-snX"/>
+                            <constraint firstItem="VpS-S6-NZo" firstAttribute="top" secondItem="WOt-q5-rS5" secondAttribute="bottom" constant="8" symbolic="YES" id="Hn3-N4-1Zh"/>
+                            <constraint firstItem="a3A-SJ-Msj" firstAttribute="top" secondItem="Zfm-aF-Awz" secondAttribute="bottom" constant="8" symbolic="YES" id="Ixw-6a-Zui"/>
+                            <constraint firstItem="a3A-SJ-Msj" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="JVa-15-cZb"/>
+                            <constraint firstItem="a3A-SJ-Msj" firstAttribute="centerX" secondItem="VpS-S6-NZo" secondAttribute="centerX" id="MAF-JX-LbM"/>
+                            <constraint firstItem="a3A-SJ-Msj" firstAttribute="centerX" secondItem="2pn-XR-RBr" secondAttribute="centerX" id="PoP-QM-zxl"/>
+                            <constraint firstItem="a3A-SJ-Msj" firstAttribute="centerX" secondItem="WOt-q5-rS5" secondAttribute="centerX" id="ViN-8X-2KM"/>
+                            <constraint firstItem="a3A-SJ-Msj" firstAttribute="leading" secondItem="Zfm-aF-Awz" secondAttribute="leading" id="c0c-AD-PgF"/>
+                            <constraint firstItem="a3A-SJ-Msj" firstAttribute="centerX" secondItem="OJs-s9-1PG" secondAttribute="centerX" id="dnO-Ec-2eH"/>
+                            <constraint firstItem="shg-7p-dWs" firstAttribute="centerX" secondItem="Zfm-aF-Awz" secondAttribute="centerX" id="hDJ-rK-LkK"/>
+                            <constraint firstItem="kVy-s0-lAQ" firstAttribute="top" secondItem="a3A-SJ-Msj" secondAttribute="bottom" constant="8" symbolic="YES" id="huZ-rZ-bhM"/>
+                            <constraint firstAttribute="trailing" secondItem="kVy-s0-lAQ" secondAttribute="trailing" constant="106" id="nIR-BO-d9G"/>
+                            <constraint firstItem="shg-7p-dWs" firstAttribute="top" secondItem="kVy-s0-lAQ" secondAttribute="bottom" constant="20" id="t1b-pU-RBI"/>
+                            <constraint firstItem="OJs-s9-1PG" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="105" id="zeI-Qh-O1E"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="AQIDescription" destination="2pn-XR-RBr" id="Ni5-aP-t2E"/>
                         <outlet property="AQINum" destination="VpS-S6-NZo" id="Dac-ET-IVU"/>
                         <outlet property="cityName" destination="OJs-s9-1PG" id="QHc-uk-isj"/>
+                        <outlet property="conversionPopup" destination="Cgm-hm-6Vm" id="Roi-Lh-Wu7"/>
+                        <outlet property="dataAveragePopup" destination="KK9-Lj-zDy" id="59o-4O-XdE"/>
                         <outlet property="distanceFilterSlider" destination="a3A-SJ-Msj" id="9uc-xj-ZSq"/>
                         <outlet property="zipCodeTextField" destination="kVy-s0-lAQ" id="m06-eb-XWq"/>
                     </connections>
