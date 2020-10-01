@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import Foundation
 
 class ViewController: NSViewController, NSTextFieldDelegate {
     
@@ -27,6 +28,9 @@ class ViewController: NSViewController, NSTextFieldDelegate {
 
         // set default zip code entry to Santa Cruz
         zipCodeTextField.stringValue = "95062"
+        
+        // setup notification observer
+        NotificationCenter.default.addObserver(self, selector: #selector(updateAQIView(_:)), name: .updateAQI, object: nil)
         
         // start the timer to update the AQI every 30 minutes
         
@@ -49,6 +53,25 @@ class ViewController: NSViewController, NSTextFieldDelegate {
         }
         return viewcontroller
     }
-
+    
+    @objc func updateAQIView(_ notification: Notification) {
+        // accessing app delegate has to be run on main queue
+        // update the UI fields when trigged by a notification
+        // pull the data from the AQI Data class
+        DispatchQueue.main.async {
+            let appDelegate = NSApp.delegate as? AppDelegate
+            guard let AQI = AQIData.shared.AQI, let button = appDelegate?.statusItem.button else {
+                return
+            }
+            let AQIString = "\(AQI)"
+            self.AQINum.stringValue = AQIString
+            self.AQIDescription.stringValue = AQIData.shared.getAQIDescription()
+            button.title = AQIString
+        }
+    }
 }
 
+// create extension for notification center for our own notification name
+extension Notification.Name {
+    static let updateAQI = Notification.Name(rawValue: "updateAQI")
+}

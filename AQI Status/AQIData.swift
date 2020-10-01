@@ -27,7 +27,7 @@ public class AQIData {
         self.zipCode = zip
         self.cityName = "-"
         self.stateName = "-"
-        self.filterDistance = 2 // default filter distance set to 1.5 mi
+        self.filterDistance = 2 // default filter distance set to 2 mi
         self.PMArr = []
     }
     
@@ -239,6 +239,7 @@ public class AQIData {
     }
     
     // take a raw PM2.5 value and set class AQI value with a calculated AQI
+    // function algorithm taken from Purple Air FAQ
     private func setAQI(pmValue: Float) {
         // error check pm value
         // if anything is wrong, just set aqi to nil
@@ -268,6 +269,9 @@ public class AQIData {
             self.AQI = calcAQI(Cp: pmValue, Ih: 50, Il: 0, BPh: 12, BPl: 0)
         }
         
+        // post notification to update UI now that clss AQI value is updated
+        NotificationCenter.default.post(name: .updateAQI, object: nil)
+        
         print(pmValue)
         print(self.AQI as Any)
     }
@@ -283,6 +287,28 @@ public class AQIData {
         aqi.round()
         
         return aqi
+    }
+    
+    public func getAQIDescription() -> String {
+        guard let aqi = self.AQI else {
+            return "--"
+        }
+        
+        if aqi >= 301 {
+            return "Hazardous"
+        } else if aqi >= 201 {
+            return "Very Unhealthy"
+        } else if aqi >= 151 {
+            return "Unhealthy"
+        } else if aqi >= 101 {
+            return "Unhealthy for Sensitive Groups"
+        } else if aqi >= 51 {
+            return "Moderate"
+        } else if aqi >= 0 {
+            return "Good"
+        } else {
+            return "--"
+        }
     }
     
     // public function which should be called whenever a new zip code is input
@@ -352,8 +378,8 @@ public class AQIData {
     private func updateError() {
         // clear all data values since something went wrong updating the aqi data
         self.zipCoordinate = nil
-        self.cityName = "-"
-        self.stateName = "-"
+        self.cityName = "--"
+        self.stateName = "--"
         
         // reset individual coordinate parts so that the url can't be made
         self.nwLat = nil
@@ -364,13 +390,17 @@ public class AQIData {
         // set PM array equal to new empty array to clear it
         self.PMArr = []
         
-        // post alert that updating failed
-        let alert = NSAlert()
-        alert.messageText = "Oops"
-        alert.informativeText = "AQI data update failed. Please try again in a few seconds"
-        alert.addButton(withTitle: "Okay")
-        
+        // weird exception sometimes thrown here if let alert = NSAlert() is on a background thread
+        /*
+         Terminating app due to uncaught exception 'NSInternalInconsistencyException', reason: 'NSWindow drag regions should only be invalidated on the Main Thread!'
+         */
+        // because of this I just scheduled it all for the main thread
         DispatchQueue.main.async {
+            // post alert that updating failed
+            let alert = NSAlert()
+            alert.messageText = "Oops"
+            alert.informativeText = "AQI data update failed. Please try again in a few seconds"
+            alert.addButton(withTitle: "Okay")
             alert.runModal()
         }
     }

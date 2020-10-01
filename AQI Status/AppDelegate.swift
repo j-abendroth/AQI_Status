@@ -22,7 +22,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if let button = self.statusItem.button {
             // actual value to be displayed in the menu bar
             // going to use a text title that will be updated to current AQI
-            button.title = "test 150"
+            button.title = "--"
             // if button is clicked, display the menu popover
             button.action = #selector(AppDelegate.togglePopover(_:))
         }
@@ -57,6 +57,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             self.popover.show(relativeTo: button.bounds, of: button, preferredEdge: NSRectEdge.minY)
         }
         self.eventMonitor?.start()
+        
     }
 
     func closePopover(sender: Any?)  {
