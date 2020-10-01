@@ -2,8 +2,9 @@
 //  ViewController.swift
 //  AQI Status
 //
-//  Created by John Abendroth on 9/15/20.
-//  Copyright © 2020 John Abendroth. All rights reserved.
+//  Main view controller class
+//  Shows the AQI data from the selected service
+//  Provides the user with different options for what data to fetch and display
 //
 
 import Cocoa
@@ -20,6 +21,14 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     }
     @IBOutlet weak var AQINum: NSTextField!
     @IBOutlet weak var AQIDescription: NSTextField!
+    @IBOutlet weak var cityName: NSTextField!
+    
+    @IBOutlet weak var distanceFilterSlider: NSSlider!
+    @IBAction func sliderValueChanged(_ sender: Any) {
+        // update new filtering distance and recalculate AQI
+        AQIData.shared.filterDistance = distanceFilterSlider.doubleValue
+        AQIData.shared.calcPM()
+    }
     
     
     override func viewDidLoad() {
@@ -63,11 +72,18 @@ class ViewController: NSViewController, NSTextFieldDelegate {
             guard let AQI = AQIData.shared.AQI, let button = appDelegate?.statusItem.button else {
                 return
             }
+            
             let AQIString = "\(AQI)"
             self.AQINum.stringValue = AQIString
             self.AQIDescription.stringValue = AQIData.shared.getAQIDescription()
+            self.cityName.stringValue = AQIData.shared.cityName + ", " + AQIData.shared.stateName
             button.title = AQIString
         }
+    }
+    
+    // remove timer and notification center observer
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: .updateAQI, object: nil)
     }
 }
 

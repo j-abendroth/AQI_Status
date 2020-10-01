@@ -2,7 +2,7 @@
 //  EventMonitor.swift
 //  AQI Status
 //
-//  Class designed to monitor for events (clicks) outside the popover menu displayed
+//  Class with responsibility to monitor for events (clicks) outside the popover menu displayed
 
 import Cocoa
 

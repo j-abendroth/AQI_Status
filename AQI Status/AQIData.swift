@@ -2,7 +2,8 @@
 //  AQIData.swift
 //  AQI Status
 //
-//  Class designed to hold all the current AQI data fetched
+//  Class with responsibilty of getting Purple Air API Data
+//  Used to store Purple Air AQI Data for when user requests to use Purple Air
 //
 
 import Cocoa
@@ -27,7 +28,7 @@ public class AQIData {
         self.zipCode = zip
         self.cityName = "-"
         self.stateName = "-"
-        self.filterDistance = 2 // default filter distance set to 2 mi
+        self.filterDistance = 2.0 // default filter distance set to 2 mi
         self.PMArr = []
     }
     

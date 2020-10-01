@@ -689,30 +689,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="373" height="430"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="WOt-q5-rS5">
-                                <rect key="frame" x="114" y="408" width="146" height="22"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Air Quality Index:" id="S7e-ab-0PX">
-                                    <font key="font" size="18" name="Helvetica"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="PZK-dd-fLy">
-                                <rect key="frame" x="27" y="359" width="327" height="28"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Unhealthy for Sensitive Groups" id="iId-qA-MOR">
-                                    <font key="font" size="23" name="Helvetica"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="VpS-S6-NZo">
-                                <rect key="frame" x="159" y="383" width="51" height="27"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" alignment="center" title="000" id="uyC-Y7-596">
-                                    <font key="font" metaFont="system" size="23"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
                             <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kVy-s0-lAQ">
                                 <rect key="frame" x="211" y="20" width="56" height="21"/>
                                 <constraints>
@@ -736,23 +712,72 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WOt-q5-rS5">
+                                <rect key="frame" x="113" y="397" width="146" height="22"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Air Quality Index:" id="S7e-ab-0PX">
+                                    <font key="font" size="18" name="Helvetica"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OJs-s9-1PG">
+                                <rect key="frame" x="138" y="309" width="96" height="16"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Santa Cruz, CA" id="mFa-gU-zdV">
+                                    <font key="font" metaFont="system" size="11"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VpS-S6-NZo">
+                                <rect key="frame" x="151" y="362" width="71" height="27"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" alignment="center" title="000.0" id="uyC-Y7-596">
+                                    <font key="font" metaFont="system" size="23"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2pn-XR-RBr">
+                                <rect key="frame" x="29" y="333" width="315" height="27"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Unhealthy for Sensitive Groups" id="w0P-Pg-Iou">
+                                    <font key="font" metaFont="system" size="23"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <slider verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="a3A-SJ-Msj">
+                                <rect key="frame" x="135" y="48" width="102" height="25"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <sliderCell key="cell" state="on" alignment="left" minValue="1" maxValue="10" doubleValue="2" tickMarkPosition="below" numberOfTickMarks="10" allowsTickMarkValuesOnly="YES" sliderType="linear" id="5Ec-8k-8iO"/>
+                                <connections>
+                                    <action selector="sliderValueChanged:" target="XfG-lQ-9wD" id="2ad-Xs-cAh"/>
+                                </connections>
+                            </slider>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Zfm-aF-Awz">
+                                <rect key="frame" x="135" y="79" width="95" height="16"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Distance Filter:" id="nkM-7g-4BM">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="Gfo-gH-soJ" firstAttribute="baseline" secondItem="kVy-s0-lAQ" secondAttribute="baseline" id="0UZ-lF-NW6"/>
-                            <constraint firstItem="WOt-q5-rS5" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="1Dz-cb-acD"/>
-                            <constraint firstItem="PZK-dd-fLy" firstAttribute="top" secondItem="WOt-q5-rS5" secondAttribute="bottom" constant="21" id="7SS-JA-KEe"/>
-                            <constraint firstAttribute="bottom" secondItem="kVy-s0-lAQ" secondAttribute="bottom" constant="20" symbolic="YES" id="8KO-am-tEH"/>
-                            <constraint firstItem="PZK-dd-fLy" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="29" id="D6K-Nr-mqf"/>
-                            <constraint firstItem="WOt-q5-rS5" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="GY4-Eb-4rF"/>
-                            <constraint firstItem="Gfo-gH-soJ" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="105" id="WA2-xB-gY0"/>
-                            <constraint firstItem="kVy-s0-lAQ" firstAttribute="leading" secondItem="Gfo-gH-soJ" secondAttribute="trailing" constant="8" symbolic="YES" id="Y58-jT-ZVu"/>
-                            <constraint firstItem="VpS-S6-NZo" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="20" symbolic="YES" id="acM-8K-F7Z"/>
-                            <constraint firstItem="VpS-S6-NZo" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="161" id="cEs-LJ-S8g"/>
+                            <constraint firstAttribute="bottom" secondItem="kVy-s0-lAQ" secondAttribute="bottom" constant="20" symbolic="YES" id="21y-Fy-b8X"/>
+                            <constraint firstItem="kVy-s0-lAQ" firstAttribute="baseline" secondItem="Gfo-gH-soJ" secondAttribute="baseline" id="Fbh-GD-3eD"/>
+                            <constraint firstAttribute="trailing" secondItem="kVy-s0-lAQ" secondAttribute="trailing" constant="106" id="aUD-p9-UNm"/>
+                            <constraint firstItem="kVy-s0-lAQ" firstAttribute="leading" secondItem="Gfo-gH-soJ" secondAttribute="trailing" constant="8" symbolic="YES" id="orP-0N-M6V"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="AQIDescription" destination="PZK-dd-fLy" id="MSe-ri-naN"/>
+                        <outlet property="AQIDescription" destination="2pn-XR-RBr" id="Ni5-aP-t2E"/>
                         <outlet property="AQINum" destination="VpS-S6-NZo" id="Dac-ET-IVU"/>
+                        <outlet property="cityName" destination="OJs-s9-1PG" id="QHc-uk-isj"/>
+                        <outlet property="distanceFilterSlider" destination="a3A-SJ-Msj" id="9uc-xj-ZSq"/>
                         <outlet property="zipCodeTextField" destination="kVy-s0-lAQ" id="m06-eb-XWq"/>
                     </connections>
                 </viewController>
