@@ -50,6 +50,33 @@ class ViewController: NSViewController, NSTextFieldDelegate {
     
     @IBOutlet weak var dataAveragePopup: NSPopUpButton!
     @IBAction func averageSelected(_ sender: Any) {
+        let avgSelected = dataAveragePopup.titleOfSelectedItem
+        if avgSelected == "Realtime" {
+            AQIData.shared.avgSelection = "a0"
+            AQIData.shared.pmNum = "pm_0,"
+        }
+        if avgSelected == "10 Minute Average" {
+            AQIData.shared.avgSelection = "a10"
+            AQIData.shared.pmNum = "pm_1,"
+        }
+        if avgSelected == "30 Minute Average" {
+            AQIData.shared.avgSelection = "a30"
+            AQIData.shared.pmNum = "pm_2,"
+        }
+        if avgSelected == "1 Hour Average" {
+            AQIData.shared.avgSelection = "a60"
+            AQIData.shared.pmNum = "pm_3,"
+        }
+        if avgSelected == "1 Day Average" {
+            AQIData.shared.avgSelection = "a1140"
+            AQIData.shared.pmNum = "pm_5,"
+        }
+        if avgSelected == "1 Week Average" {
+            AQIData.shared.avgSelection = "a10080"
+            AQIData.shared.pmNum = "pm_6,"
+        }
+        
+        AQIData.shared.updateData()
     }
     
     

@@ -18,6 +18,8 @@ public class AQIData {
     public var AQI: Float?
     public var AQandU: Bool
     public var LRAPA: Bool
+    public var avgSelection: String
+    public var pmNum: String
     
     private var zipCoordinate: CLLocationCoordinate2D?
     private var PMArr: [(pmValue: Float, coordinate: CLLocationCoordinate2D)]
@@ -34,6 +36,8 @@ public class AQIData {
         self.PMArr = []
         self.AQandU = false
         self.LRAPA = false
+        self.avgSelection = "a10"
+        self.pmNum = "pm_1,"
     }
     
     enum coordinateError: Error {
@@ -129,7 +133,7 @@ public class AQIData {
     // otherwise send a result type of failure with the case
     private func fetchPurpleAir(completion: @escaping (Result<[(pmValue: Float, coordinate: CLLocationCoordinate2D)], PurpleAirError>) -> Void) {
         if let nwLat = self.nwLat, let nwLng = self.nwLng, let seLat = self.seLat, let seLng = self.seLng {
-            let urlString = "https://www.purpleair.com/data.json?opt=1/i/mAQI/a10/cC4&fetch=true&nwlat=" + "\(nwLat)" + "&selat=" + "\(seLat)" + "&nwlng=" + "\(nwLng)" + "&selng=" + "\(seLng)" + "&fields=pm_1,"
+            let urlString = "https://www.purpleair.com/data.json?opt=1/i/mAQI/" + self.avgSelection + "/cC0&fetch=true&nwlat=" + "\(nwLat)" + "&selat=" + "\(seLat)" + "&nwlng=" + "\(nwLng)" + "&selng=" + "\(seLng)" + "&fields=" + self.pmNum
             print(urlString)
             
             guard let url = URL(string: urlString) else {
